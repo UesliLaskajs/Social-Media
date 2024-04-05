@@ -1,0 +1,7 @@
+/* eslint-disable @tailwind base */
+/* eslint-disable @tailwind components */
+/* eslint-disable @tailwind utilities */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
