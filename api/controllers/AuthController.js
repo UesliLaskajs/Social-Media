@@ -25,3 +25,23 @@ module.exports.signUp = async (req, res, next) => {
         res.status(500).json({ error: "Server Error", message: err.message });
     }
 };
+
+module.exports.SingIn = (req, res, next) => {
+    const { username, password } = req.body;
+
+    if (!username, !password) {
+        return next(createError(400, "All fields  are required"))
+    }
+
+    const validUsername = UserModel.findOne({ username })
+
+    if(!validUsername){
+        return next(createError(400, "User Not Found"))
+    }
+
+    const validPassword=bcrypt.compareSync(password, validUsername.password)
+    
+    if(!validPassword){
+        return next(createError(401, 'Invalid Password'))
+    }
+}
