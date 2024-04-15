@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Import useHistory from react-router-dom
 import { Label, TextInput, Button, Spinner, Alert } from "flowbite-react";
 import axios from "axios";
 
@@ -7,7 +7,8 @@ function Signup() {
   const [data, setData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const  navigate = useNavigate();
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.id]: e.target.value.trim() });
   };
@@ -31,8 +32,8 @@ function Signup() {
           console.log("Data sent to the server");
         }
 
-        if (res.status===201){
-          navigate("http://localhost:5173/sign-in")
+        if (res.status === 201) {
+          navigate("/sign-in"); 
         }
       })
       .catch((err) => {
@@ -83,7 +84,11 @@ function Signup() {
               onChange={handleChange}
             />
 
-            <Button type="submit" gradientDuoTone={"purpleToPink"} disabled={loading}>
+            <Button
+              type="submit"
+              gradientDuoTone={"purpleToPink"}
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <Spinner size="sm" />
