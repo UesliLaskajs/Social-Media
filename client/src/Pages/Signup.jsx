@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // Import useHistory from react-router-dom
 import { Label, TextInput, Button, Spinner, Alert } from "flowbite-react";
 import axios from "axios";
-
+import OAuth from "../Components/OAuth";
 function Signup() {
   const [data, setData] = useState({});
   const [errorMessage, setErrorMessage] = useState(null);
@@ -98,6 +98,7 @@ function Signup() {
                 "Sign up"
               )}
             </Button>
+            <OAuth/>
 
             <div className="flex  gap-2 mt-5 text-m md:text-xl">
               <span>Have an Account ?</span>
