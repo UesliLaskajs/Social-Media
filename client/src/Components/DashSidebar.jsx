@@ -17,9 +17,9 @@ function DashSidebar() {
   }, [location.search]); //Rendering based on the change of parameter tab="profile or "
 
   return (
-    <Sidebar className="w-full md:w-56">
+    <Sidebar className="w-full md:w-56 ">
       <Sidebar.Items>
-        <Sidebar.ItemGroup>
+        <Sidebar.ItemGroup className="md:min-h-screen">
           <SidebarItem>
             <Link to="/dashboard?tab=profile">
               <SidebarItem
