@@ -48,11 +48,9 @@ module.exports.signIn = async (req, res, next) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
-
         res.cookie("access_token", token, { httpOnly: true })
             .status(200)
             .json({ message: "User logged in successfully", user });
-
     } catch (err) {
         next(err); // Pass error to the error handling middleware
     }

@@ -1,8 +1,9 @@
-const { createError } = require("../controllers/Errors")
+const {createError} = require("../controllers/Errors")
 const jwt = require("jsonwebtoken")
 require("dotenv").config()
 
 module.exports.verifyToken = (req, res, next) => {
+
     const token = req.cookies.access_token
     if (!token) {
         next(createError(401, "User is Not Loged in"))
