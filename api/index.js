@@ -7,6 +7,7 @@ const port = 3000;
 const cors = require("cors")
 const UserRouter = require('./UserRoutes/UserRoutes')
 const AuthRouter = require("./UserRoutes/AuthRoutes")
+const cookieParser = require("cookie-parser")
 // Middleware
 app.use(cors())
 app.use(express.json());
@@ -22,12 +23,14 @@ mongoose.connect(process.env.MONGO)
   });
 
 
+app.use(cookieParser())
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
 
-app.use("/apiusers", UserRouter)
+
 app.use("/apiauth", AuthRouter)
+app.use("/apiusers", UserRouter)
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
