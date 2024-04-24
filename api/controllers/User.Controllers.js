@@ -11,7 +11,7 @@ module.exports.getAllUsers = (req, res) => {
 
 // Controller function to update user data
 module.exports.updateUser = (req, res, next) => {
-    if (req.user.id !== req.params.userId) {
+    if (req.user.id !== req.params.userId) { //Get the request from the user id and if it is not same as Request Url Param Throw Error
         return next(createError(401, "User is not allowed to update"));
     }
     // Validate and hash password if provided
@@ -19,7 +19,7 @@ module.exports.updateUser = (req, res, next) => {
         if (req.body.password.length < 6) {
             return next(createError(403, "Password must be longer than 6 characters"));
         }
-        req.body.password = bcrypt.hashSync(req.body.password, 10);
+        req.body.password = bcrypt.hashSync(req.body.password, 10);//Encrypt The password
     }
 
     // Validate username length
@@ -38,12 +38,12 @@ module.exports.updateUser = (req, res, next) => {
     }
 
     // Check if username contains only letters and numbers
-    if (!/^[a-zA-Z0-9]+$/.test(req.body.username)) {
+    if (!/^[a-zA-Z0-9]+$/.test(req.body.username)) {//Implemeted Regex to only numbers and charachters
         return next(createError(401, "Username must contain only letters and numbers"));
     }
 
     // Update user data in the database
-    Usermodel.findOneAndUpdate(
+    Usermodel.findOneAndUpdate(//From The user Find an ID AND SET THE UPDATED 
         { _id: req.params.userId }, // Filter criteria to find the user
         {
             $set: {

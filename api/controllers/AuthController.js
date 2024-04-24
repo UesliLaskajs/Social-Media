@@ -47,8 +47,8 @@ module.exports.signIn = async (req, res, next) => {
             return next(createError(400, "Invalid username or password")); // Same message to not reveal information
         }
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour
-        res.cookie("access_token", token, { httpOnly: true })
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour //cREATE TOKEN REQUEST
+        res.cookie("access_token", token, { httpOnly: true })//CREATE THE COOKIE SESSION AND NAMED access_token
             .status(200)
             .json({ message: "User logged in successfully", user });
     } catch (err) {
