@@ -19,7 +19,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       <DashSidebar />
-      <div>{tab === "profile" && <DashProfile />}</div>
+      <div className="w-full">{tab === "profile" && <DashProfile />}</div>
     </div>
   );
 }

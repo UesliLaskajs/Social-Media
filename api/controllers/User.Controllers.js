@@ -6,14 +6,19 @@ const bcrypt = require("bcrypt");
 module.exports.getAllUsers = (req, res) => {
     Usermodel.find().then((respo) => {
         res.json(respo)
+
     })
 }
 
 // Controller function to update user data
 module.exports.updateUser = (req, res, next) => {
+   
+
     if (req.user.id !== req.params.userId) { //Get the request from the user id and if it is not same as Request Url Param Throw Error
         return next(createError(401, "User is not allowed to update"));
     }
+    
+    console.log(req.params ,req.user)
     // Validate and hash password if provided
     if (req.body.password) {
         if (req.body.password.length < 6) {
