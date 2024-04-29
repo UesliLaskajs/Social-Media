@@ -18,7 +18,6 @@ module.exports.updateUser = (req, res, next) => {
         return next(createError(401, "User is not allowed to update"));
     }
     
-    console.log(req.params ,req.user)
     // Validate and hash password if provided
     if (req.body.password) {
         if (req.body.password.length < 6) {
@@ -40,7 +39,7 @@ module.exports.updateUser = (req, res, next) => {
     // Check if username is lowercase
     if (req.body.username !== req.body.username.toLowerCase()) {
         return next(createError(401, "Username must be lowercase"));
-    }
+    }   
 
     // Check if username contains only letters and numbers
     if (!/^[a-zA-Z0-9]+$/.test(req.body.username)) {//Implemeted Regex to only numbers and charachters

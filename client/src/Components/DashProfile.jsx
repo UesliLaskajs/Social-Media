@@ -1,92 +1,86 @@
-import { useSelector, useDispatch } from "react-redux"; //Implemented UserSelector To spread the UserState
-import { TextInput, Button, Alert } from "flowbite-react"; //Component from FlowBite
-import { useEffect, useRef, useState } from "react"; //UseEffect to render based on the change of the profile image and UseRef to access the userImage file input without showing the real div
+import { useSelector, useDispatch } from "react-redux";
+import { TextInput, Button, Alert } from "flowbite-react";
+import { useEffect, useRef, useState } from "react";
 import {
-  getStorage, //Initialises a firebase Storage instance from the firebase.js we had
-  ref, //it Takes a special place in the database for tasks such as upload and delete etcc
-  uploadBytesResumable, //The bytes uploaded during the upload process
-  getDownloadURL, //Creates a downloadable link for the file wich returns as a link
-} from "firebase/storage"; //The firebase storage instance
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
 import {
   updateStart,
   updateError,
   updateSuccess,
 } from "../redux/Users/UserSlice";
-import { app } from "../firebase"; //The firebase app instance
+import { app } from "../firebase";
 import axios from "axios";
 
 function DashProfile() {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user); //We get The current user payload from the userSlice from the name user
-  const [image, setImage] = useState(null); //image File
-  const [imgUrl, setImageUrl] = useState(null); //Image Link created as a Link from file
-  const [ImageUploadProgress, setImageUploadProgress] = useState(0);
+  const { currentUser } = useSelector((state) => state.user);
+  const [image, setImage] = useState(null);
+  const [imgUrl, setImageUrl] = useState(null);
+
   const [ImageUploadProgressError, setImageUploadProgressError] =
     useState(null);
-  const [formData, setFormData] = useState({});
-  console.log(ImageUploadProgress);
-  const filePickRef = useRef(null); //The Variable wich initiates the function that will refer the input to the imageProfile when clicked
+  const [formData, setFormData] = useState({
+    username: currentUser.username || currentUser.data.username,
+    email: currentUser.email || currentUser.data.email,
+    password: "",
+  });
+  const filePickRef = useRef(null);
 
   const handleFile = (e) => {
-    //Function to handle onChange input
-    const file = e.target.files[0]; //Stores the first Image of the array
+    const file = e.target.files[0];
     if (file) {
-      //if file exists
-      setImage(file); //save
-      setImageUrl(URL.createObjectURL(file)); //Create the Object and pass it to file
+      setImage(file);
+      setImageUrl(URL.createObjectURL(file));
     }
   };
+
   const handleOnChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
-  const onSubmit = (e) => {
+
+  const onSubmit = async (e) => {
     e.preventDefault();
     dispatch(updateStart());
-    axios
-      .put(
-        `http://localhost:3000/apiusers/update/${currentUser.data._id}`,
+    const userId = currentUser._id || currentUser.data._id;
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/apiusers/update/${userId}`,
         formData
-      )
-      .then((response) => {
-        dispatch(updateSuccess(response.data));
-      })
-      .catch((err) => {
-        dispatch(updateError(err.message));
-      });
+      );
+      dispatch(updateSuccess(response.data));
+    } catch (err) {
+      dispatch(updateError(err.response.data.message || "Update failed"));
+    }
   };
+
   useEffect(() => {
-    //Render the image when the image is uploaded
     const uploadImage = async () => {
       setImageUploadProgressError(null);
       if (image) {
-        const storage = getStorage(app); //we get the storage instance
-        const imageName = new Date().getTime() + image.name; //We mix the name of image with the time and generate a new image name
-        const storageRef = ref(storage, imageName); //Saves a Reference to the Firebase
-        const uploadTask = uploadBytesResumable(storageRef, image); //Bytes Uploaded to the Reference on the Database
+        const storage = getStorage(app);
+        const imageName = new Date().getTime() + image.name;
+        const storageRef = ref(storage, imageName);
+        const uploadTask = uploadBytesResumable(storageRef, image);
 
         uploadTask.on(
-          //Listen For Changes Of State
           "state_changed",
           (snapshot) => {
-            //Promise Saved to snapshot
             const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100; //Progress is bytesTransferred / totalBytes *100 ?
-            setImageUploadProgress(progress.toFixed(0)); //ToFixed Rounds it to 0
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
           },
-          (error) => {
-            //The Error Passed
-            setImageUploadProgressError(
-              //Set The Image Upload Progress Error
-              "Could Not upload image(file must be less than 2 MB)",
-              error
-            );
-            setImage(null); //Restate the image to null
-            setImageUploadProgress(null);
+          () => {
+            setImageUploadProgressError("Could not upload image");
+            setImage(null);
+
             setImageUrl(null);
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-              //From THe Download get the URL and pass it to Image Url
               setImageUrl(downloadURL);
               setFormData({ ...formData, photo: downloadURL });
             });
@@ -96,7 +90,8 @@ function DashProfile() {
     };
 
     uploadImage();
-  }, [image]); //Every change in image will trigger the useEffect rendering
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [image]);
 
   return (
     <div className="max-w-lg w-full mx-auto p-3">
@@ -107,28 +102,28 @@ function DashProfile() {
             type="file"
             accept="image/*"
             onChange={handleFile}
-            ref={filePickRef} //Reference to the Input file
+            ref={filePickRef}
             className="hidden"
           />
           <img
-            src={imgUrl || currentUser.data.photo}
+            src={imgUrl || currentUser.photo || currentUser.data.photo}
             className="w-full h-full object-cover rounded-full border-[lightgray] border-8"
             alt="Profile Image"
-            onClick={() => filePickRef.current.click()} //Reference to the Input file on the onclick
+            onClick={() => filePickRef.current.click()}
           />
         </div>
         {ImageUploadProgressError && <Alert>{ImageUploadProgressError}</Alert>}
         <TextInput
           id="username"
           type="text"
-          defaultValue={currentUser.data.username}
+          value={formData.username}
           placeholder="Username"
           onChange={handleOnChange}
         />
         <TextInput
           id="email"
           type="email"
-          defaultValue={currentUser.data.email}
+          value={formData.email}
           placeholder="Email"
           onChange={handleOnChange}
         />

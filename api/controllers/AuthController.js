@@ -30,9 +30,10 @@ module.exports.signUp = async (req, res, next) => {
 };
 
 module.exports.signIn = async (req, res, next) => {
+    
     try {
         const { username, password } = req.body;
-        console.log(req)
+       
         if (!username || !password) {
             return next(createError(400, "All fields are required"));
         }

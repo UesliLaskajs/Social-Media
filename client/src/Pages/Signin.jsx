@@ -26,7 +26,6 @@ function SignIn() {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(signInStart());
-
     const trimmedData = {
       username: data.username.trim(),
       password: data.password.trim(),
