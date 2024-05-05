@@ -30,10 +30,10 @@ module.exports.signUp = async (req, res, next) => {
 };
 
 module.exports.signIn = async (req, res, next) => {
-    
+
     try {
         const { username, password } = req.body;
-       
+
         if (!username || !password) {
             return next(createError(400, "All fields are required"));
         }
@@ -49,7 +49,7 @@ module.exports.signIn = async (req, res, next) => {
         }
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }); // Token expires in 1 hour //cREATE TOKEN REQUEST
-        res.cookie("access_token", token, { httpOnly: true })//CREATE THE COOKIE SESSION AND NAMED access_token
+        res.cookie("access_token", token, { httpOnly: true, sameSite: 'None' })//CREATE THE COOKIE SESSION AND NAMED access_token
             .status(200)
             .json({ message: "User logged in successfully", user });
     } catch (err) {
@@ -79,6 +79,6 @@ module.exports.google = async (req, res, next) => {
         await newUser.save()
         const token = jwt.sign({ newUser: newUser._id }, process.env.JWT_SECRET_KEY)
         const { password, ...rest } = newUser._doc
-        res.cookie("acess_token", token, { httpOnly: true }).json(rest)
+        res.cookie("access_token", token, { httpOnly: true, sameSite: 'None' }).json(rest)
     }
 }

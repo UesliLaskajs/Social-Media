@@ -47,10 +47,10 @@ function DashProfile() {
     dispatch(updateStart());
     const userId = currentUser._id || currentUser.data._id;
     try {
-      const response = await axios.put(
+      const response = await axios.patch(
         `http://localhost:3000/apiusers/update/${userId}`,
         formData,
-        { withCredentials: true } // Send credentials (cookies) with the request
+        { withCredentials: true } // Ensure cookies are sent with the request
       );
       dispatch(updateSuccess(response.data));
     } catch (err) {

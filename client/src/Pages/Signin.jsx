@@ -6,6 +6,7 @@ import {
   signInFailure,
   signInSuccess,
 } from "../redux/Users/UserSlice";
+// import Cookies from 'js-cookie'; // Correct import statement
 import { Label, TextInput, Button, Spinner, Alert } from "flowbite-react";
 import OAuth from "../Components/OAuth";
 import axios from "axios";
@@ -39,7 +40,8 @@ function SignIn() {
     axios
       .post("http://localhost:3000/apiauth/sign-in", trimmedData)
       .then((res) => {
-        console.log("Sign-in successful:", res.data);
+        // Cookies.set('access_token', res.access_token); // Correct usage of Cookies
+        console.log("Sign-in successful:", res.data	);
         dispatch(signInSuccess(res.data.user));
         navigate("/");
       })
